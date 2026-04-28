@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+:root {
+  color: #e5edf6;
+  background:
+    radial-gradient(circle at top left, rgba(72, 187, 255, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(255, 183, 77, 0.16), transparent 28%),
+    linear-gradient(180deg, #08131d 0%, #0b0f18 52%, #0f1623 100%);
+  font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: transparent;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(86, 196, 255, 0.28);
+  color: #f8fbff;
+}

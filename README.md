@@ -1,6 +1,6 @@
 # SupplySync AI 采购语音 Agent Demo
 
-一个本地可运行的网页端中文采购语音 Agent MVP。当前版本模拟“AI 采购主动给供应商打电话”的场景：页面左侧填写采购 JSON 和补充话术后，点击开始外呼，AI 会先用中文开场；用户扮演供应商接听并回复，右侧会持续整理结构化采购信息。
+一个本地可运行的网页端中文采购语音 Agent MVP。当前版本模拟“AI 采购主动给供应商打电话”的场景：页面左侧填写采购 JSON 和补充话术后，点击开始外呼，AI 会先用中文开场；用户扮演供应商接听并回复，右侧会持续整理结构化采购信息。项目也已经补齐了单服务部署能力，生产环境下可以由后端同时托管前端静态页和 WebSocket/API。
 
 ## 技术栈
 
@@ -22,6 +22,8 @@
 
 ```text
 sound agent/
+  Dockerfile
+  render.yaml
   frontend/
     public/
     src/
@@ -77,6 +79,7 @@ VITE_API_BASE_URL=http://localhost:3001
 - `VOLCENGINE_TTS_RESOURCE_ID` 当前克隆音色 2.0 默认填 `seed-icl-2.0`
 - `VOLCENGINE_TTS_VOICE_ID` 必填，填写你在火山控制台复刻成功后的音色 ID
 - `VOLCENGINE_TTS_SPEECH_RATE` 可选，默认 `45`；火山官方范围为 `-50` 到 `100`，数值越大语速越快
+- 生产环境如果前后端同域部署，前端可以不配置 `VITE_API_BASE_URL`，会默认回连当前站点
 
 ## 安装依赖
 
@@ -113,6 +116,50 @@ npm run dev
 启动后，打开终端里 Vite 提示的本地地址，通常是：
 
 - [http://localhost:5173](http://localhost:5173)
+
+## 正式部署
+
+仓库根目录已经准备好单服务部署文件：
+
+- [Dockerfile](/Users/zhaogongbin/Desktop/sound%20agent/Dockerfile)
+- [render.yaml](/Users/zhaogongbin/Desktop/sound%20agent/render.yaml)
+
+生产环境推荐让后端统一提供：
+
+- `/` 前端页面
+- `/api/health` 健康检查
+- `/ws` 实时语音 WebSocket
+
+### Render
+
+1. 在 Render 里选择 `New +` -> `Blueprint`
+2. 连接 GitHub 仓库 `Colin-SupplySync/supplysync-voice-agent-demo`
+3. Render 会自动识别根目录的 `render.yaml`
+4. 在环境变量里填入：
+   - `GEMINI_API_KEY`
+   - `VOLCENGINE_API_KEY`
+   - `VOLCENGINE_TTS_VOICE_ID`
+5. 部署完成后，一个域名就能同时访问前端、API 和 WebSocket
+
+### 通用 Docker 平台
+
+任何支持 Docker 的平台都可以直接部署，例如 Render Web Service、Railway、Fly.io 或自建云主机。
+
+本地可以先这样验证镜像：
+
+```bash
+cd /Users/zhaogongbin/Desktop/sound\ agent
+docker build -t supplysync-voice-agent-demo .
+docker run --rm -p 3001:3001 \
+  -e GEMINI_API_KEY=your_gemini_api_key_here \
+  -e VOLCENGINE_API_KEY=your_volcengine_api_key_here \
+  -e VOLCENGINE_TTS_VOICE_ID=your_cloned_voice_id_here \
+  supplysync-voice-agent-demo
+```
+
+然后直接打开：
+
+- [http://localhost:3001](http://localhost:3001)
 
 ## 如何测试采购外呼
 

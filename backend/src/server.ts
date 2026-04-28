@@ -1,4 +1,6 @@
 import http from "node:http";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import cors from "cors";
 import express from "express";
@@ -9,6 +11,10 @@ import { createGeminiClient } from "./geminiLive.js";
 import { ClientSessionManager } from "./sessionManager.js";
 
 const app = express();
+const currentFilePath = fileURLToPath(import.meta.url);
+const currentDirPath = path.dirname(currentFilePath);
+const frontendDistPath = path.resolve(currentDirPath, "../../frontend/dist");
+const frontendIndexPath = path.join(frontendDistPath, "index.html");
 
 app.use(
   cors({
@@ -24,6 +30,21 @@ app.get("/api/health", (_req, res) => {
     missingEnvVars: env.missingEnvVars,
     model: env.GEMINI_MODEL,
     summaryModel: env.GEMINI_TEXT_MODEL,
+  });
+});
+
+app.use(express.static(frontendDistPath));
+
+app.get(/^\/(?!api\/).*/, (req, res, next) => {
+  if (path.extname(req.path)) {
+    next();
+    return;
+  }
+
+  res.sendFile(frontendIndexPath, (error) => {
+    if (error) {
+      next();
+    }
   });
 });
 

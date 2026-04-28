@@ -10,9 +10,20 @@ import type {
 } from "../types";
 import { PcmPlayer, downsampleFloat32ToInt16 } from "../utils/audio";
 
-const backendBaseUrl =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") ||
-  "http://localhost:3001";
+const configuredApiBaseUrl = (
+  import.meta.env.VITE_API_BASE_URL as string | undefined
+)?.replace(/\/$/, "");
+const runtimeHostname =
+  typeof window !== "undefined" ? window.location.hostname : "";
+const runtimeOrigin =
+  typeof window !== "undefined" ? window.location.origin.replace(/\/$/, "") : "";
+const isLocalRuntime =
+  runtimeHostname === "localhost" ||
+  runtimeHostname === "127.0.0.1" ||
+  runtimeHostname === "::1";
+const backendBaseUrl = isLocalRuntime
+  ? "http://localhost:3001"
+  : configuredApiBaseUrl || runtimeOrigin || "http://localhost:3001";
 const socketUrl = `${backendBaseUrl.replace(/^http/, "ws")}/ws`;
 const healthUrl = `${backendBaseUrl}/api/health`;
 

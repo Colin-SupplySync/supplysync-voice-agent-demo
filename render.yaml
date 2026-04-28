@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: supplysync-voice-agent-demo
+    runtime: docker
+    plan: starter
+    autoDeploy: true
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.1-flash-live-preview
+      - key: GEMINI_TEXT_MODEL
+        value: gemini-2.5-flash
+      - key: GEMINI_VOICE_NAME
+        value: Kore
+      - key: VOLCENGINE_API_KEY
+        sync: false
+      - key: VOLCENGINE_TTS_RESOURCE_ID
+        value: seed-icl-2.0
+      - key: VOLCENGINE_TTS_VOICE_ID
+        sync: false
+      - key: VOLCENGINE_TTS_SPEECH_RATE
+        value: "45"
+      - key: CLIENT_ORIGIN
+        value: "*"
+      - key: PORT
+        value: "3001"

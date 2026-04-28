@@ -1,0 +1,9 @@
+.git
+.DS_Store
+backend/.env
+backend/dist
+backend/node_modules
+frontend/.env.local
+frontend/dist
+frontend/node_modules
+.playwright-cli
